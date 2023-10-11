@@ -1,0 +1,26 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Step
+#pragma kernel Paint
+
+RWTexture2D<float4> result;
+StructuredBuffer<int> cells;
+
+[numthreads(8,8,1)]
+void Step(uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    result[id.xy] = float4(id.x & id.y, (id.x & 15) / 15.0, (id.y & 15) / 15.0, 0.0);
+}
+
+[numthreads(8,8,1)]
+void Paint(uint3 id : SV_DispatchThreadID)
+{
+    const int type = cells[id.y * 256 + id.x];
+    
+    result[id.xy] = float4(0, 0, 0, 1);
+    if (type == 1)
+    {
+        result[id.xy] = float4(0, 0, 1, 1);
+    }
+}
